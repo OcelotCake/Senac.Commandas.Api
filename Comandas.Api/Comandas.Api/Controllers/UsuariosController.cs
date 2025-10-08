@@ -1,4 +1,5 @@
-﻿using Comandas.Api.Models;
+﻿using Comandas.Api.DTOs;
+using Comandas.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using static Comandas.Api.Models.Usuario;
 
@@ -39,8 +40,8 @@ namespace Comandas.Api.Controllers
 
                 return Results.Ok(usuario);
         }
-                
-        
+
+
 
 
 
@@ -56,8 +57,23 @@ namespace Comandas.Api.Controllers
 
         // POST api/<UsuariosController>
         [HttpPost]
-        public IResult Post([FromBody] Usuario usuario)
+        public IResult Post([FromBody] UsuarioCreateRequest usuariocreate)
         {
+
+            { 
+            if (usuariocreate.Senha.Length < 6)
+                return Results.BadRequest("A senha deve ter pelo menos 6 caracteres.");
+            if (usuariocreate.Nome.Length < 3)
+                return Results.BadRequest("Email invalido");
+            if (usuariocreate.Email.Length < 5 || !usuariocreate.Email.Contains("@"))
+            return Results.BadRequest("O email deve ser valido.");
+        }
+                var usuario = new Usuario
+               { Nome = usuariocreate.Nome,
+                Email = usuariocreate.Email,
+                Senha = usuariocreate.Senha,
+                Status = usuariocreate.Status
+            };
             usuarios.Add(usuario);
             return Results.Created($"/api/usuario/{usuario.Id}", usuario);
         }
@@ -80,9 +96,10 @@ namespace Comandas.Api.Controllers
 
         // PUT api/<UsuariosController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] UsuarioUpdateRequest usuarioUpdate)
         {
-            
+           
+
 
         }
 
